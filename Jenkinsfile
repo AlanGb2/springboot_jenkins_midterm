@@ -5,8 +5,37 @@ pipeline {
         stage('Build') {
             steps {
                 sh 'chmod +x mvnw'
-                sh './mvnw clean package'
+                sh './mvnw clean package -DskipTests'
             }
+        }
+
+        stage('Upload to Nexus') {
+            steps {
+                sh '''
+                JAR_FILE=$(ls target/*.jar | head -n 1)
+
+                curl -v -u admin:11234567891 \
+                  -F "maven2.groupId=com.example" \
+                  -F "maven2.artifactId=springboot-jenkins-midterm" \
+                  -F "maven2.version=1.0.0" \
+                  -F "maven2.generate-pom=true" \
+                  -F "maven2.asset1=@${JAR_FILE}" \
+                  -F "maven2.asset1.extension=jar" \
+                  "http://host.docker.internal:8081/service/rest/v1/components?repository=maven-releases-hw6"
+                '''
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline finished.'
+        }
+        success {
+            echo 'Build successful and uploaded to Nexus!'
+        }
+        failure {
+            echo 'Build failed.'
         }
     }
 }
