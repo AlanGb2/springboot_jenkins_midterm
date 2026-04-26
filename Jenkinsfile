@@ -14,7 +14,7 @@ pipeline {
                 sh '''
                 JAR_FILE=$(ls target/*.jar)
         
-                curl -v -u admin:CSIT1234567890 \
+                curl -v -u admin:da23d000-a7e7-4716-bb99-59d1590631c7 \
                 -F "maven2.groupId=com.example" \
                 -F "maven2.artifactId=demo" \
                 -F "maven2.version=1.0.0" \
